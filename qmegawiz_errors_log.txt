@@ -1,0 +1,8 @@
+
+
+D:/ZiSyncBackup/A4_FPGA/uartverilog_Ram/db/a_fefifo_n4e.tdf
+
+Dec 21 11AM:18:00>: MegaWizard Plug-In Manager does not recognize D:/ZiSyncBackup/A4_FPGA/uartverilog_Ram/db/a_fefifo_n4e.tdf as a wizard-generated
+custom megafunction variation.
+
+Do you want to use a wizard to overwrite it?

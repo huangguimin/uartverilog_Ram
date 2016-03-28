@@ -1,0 +1,135 @@
+module motor(
+    		clk,reset_n,
+			pwm_out
+    		);
+
+input    clk,reset_n;
+output	pwm_out;
+
+
+parameter T20ms = 24'd5_00_000;
+parameter PWM_TARGET = 24'd800*10;
+
+reg pwm_enable;
+reg pwm_out;
+
+reg [31:0] count_1s;
+always @(posedge clk or negedge reset_n)
+	if(!reset_n)
+		begin
+			count_1s <= 32'd0;
+		end
+	else if(!pwm_enable)
+		begin
+			if(count_1s < 32'd10_000_000)
+				count_1s <= count_1s + 1'b1;
+			else
+				count_1s <= 32'd0;
+		end
+
+reg [23:0] temp;
+reg [23:0] speed_temp;
+always @(posedge clk or negedge reset_n)
+	if(!reset_n)
+		begin
+			speed_temp <= 24'd459000;
+			temp <= 24'd0;
+		end
+	else if((pwm_count_num - temp) >= 24'd4)
+		begin
+			temp <= pwm_count_num;
+			if(pwm_count_num < 24'd100)
+				speed_temp <= speed_temp + 24'd1000;
+			else if(pwm_count_num > (PWM_TARGET - 24'd100))
+				speed_temp <= speed_temp - 24'd1000;
+			else
+				speed_temp <= 24'd492000;
+		end	
+		else if(pwm_count_num == PWM_TARGET)
+				begin
+					temp <= 24'd0;
+					speed_temp <= 24'd459000;
+				end
+			
+
+//--------------pwm_out------------------
+reg [23:0] PWM_counter;			
+always @ (posedge clk or negedge reset_n)
+begin
+		if(reset_n==1'b0)
+			PWM_counter <= 24'd0;
+		else
+		begin
+			if(pwm_enable)
+			begin
+				if(PWM_counter >= (T20ms - speed_temp))
+					PWM_counter <= 24'd0;
+				else
+					PWM_counter <= PWM_counter+1'b1;
+			end
+			else
+				PWM_counter <= 24'd0;
+		end
+end      
+
+always @ (posedge clk or negedge reset_n)
+begin
+		if(reset_n==1'b0)
+			pwm_out <= 1'b1;
+		else
+		begin
+			if(pwm_enable)
+			begin
+				if(PWM_counter <= (T20ms - speed_temp)/2)
+					pwm_out <= 1'b0;
+				else
+					pwm_out <= 1'b1;
+			end
+			else
+				pwm_out <= 1'b1;
+		end
+end
+//----------------pwm_TARGET-------------------
+reg pwm_out_reg;
+wire pwm_count_reg;
+always @ (posedge clk or negedge reset_n)
+begin
+		if(reset_n == 1'b0)
+			begin
+				pwm_out_reg <= 1'd1;
+			end
+		else
+			begin
+				pwm_out_reg <= pwm_out;
+			end
+end
+assign pwm_count_reg = ~pwm_out & pwm_out_reg;
+
+reg [23:0] pwm_count_num;
+always @ (posedge clk or negedge reset_n)
+begin
+		if(reset_n==1'b0)
+			begin
+				pwm_count_num <= 24'd0;
+				pwm_enable <= 1'b1;
+			end
+		else
+		begin
+			if(pwm_count_reg)	
+			begin
+				if(pwm_count_num < PWM_TARGET)
+					begin
+						pwm_count_num <= pwm_count_num + 1'b1;
+						pwm_enable <= 1'b1;	
+					end 	
+				else
+					begin
+						pwm_enable <= 1'b0;
+						pwm_count_num <= 24'd0;
+					end
+			end
+			if(count_1s == 32'd10_000_000)
+				pwm_enable <= 1'b1;
+		end
+end
+endmodule

@@ -1,0 +1,30 @@
+
+State Machine - |my_uart_top|send_state
+Name send_state.000 send_state.010 send_state.001 
+send_state.000 0 0 0 
+send_state.001 1 0 1 
+send_state.010 1 1 0 
+
+State Machine - |my_uart_top|state3_5
+Name state3_5.00 state3_5.10 state3_5.01 
+state3_5.00 0 0 0 
+state3_5.01 1 0 1 
+state3_5.10 1 1 0 
+
+State Machine - |my_uart_top|state
+Name state.state10 state.state9 state.state8 state.state6 state.state5 state.state4 state.state3 state.state2 state.state0 
+state.state0 0 0 0 0 0 0 0 0 0 
+state.state2 0 0 0 0 0 0 0 1 1 
+state.state3 0 0 0 0 0 0 1 0 1 
+state.state4 0 0 0 0 0 1 0 0 1 
+state.state5 0 0 0 0 1 0 0 0 1 
+state.state6 0 0 0 1 0 0 0 0 1 
+state.state8 0 0 1 0 0 0 0 0 1 
+state.state9 0 1 0 0 0 0 0 0 1 
+state.state10 1 0 0 0 0 0 0 0 1 
+
+State Machine - |my_uart_top|motor:motor|pwm_state
+Name pwm_state.00 pwm_state.10 pwm_state.01 
+pwm_state.00 0 0 0 
+pwm_state.01 1 0 1 
+pwm_state.10 1 1 0 
